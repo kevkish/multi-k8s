@@ -1,0 +1,25 @@
+language: generic
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t kevkish/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true kevkish/react-test npm test -- --watchAll=false
+
+after_success:
+  - docker build -t kevkish/multi-client ./client
+  - docker build -t kevkish/multi-nginx ./nginx
+  - docker build -t kevkish/multi-server ./server
+  - docker build -t kevkish/multi-worker ./worker
+
+#Log into Docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
+#push images to Docker Hub
+  - docker push kevkish/multi-client
+  - docker push kevkish/multi-nginx
+  - docker push kevkish/multi-server
+  - docker push kevkish/multi-worker
