@@ -23,3 +23,15 @@ after_success:
   - docker push kevkish/multi-nginx
   - docker push kevkish/multi-server
   - docker push kevkish/multi-worker
+
+  deploy:
+    provide: elasticbeanstalk
+    region: 'us-east-2'
+    app: 'multi-docker'
+    env: 'MultiDocker-env'
+    bucket_name: 'elasticbeanstalk-us-east-2-116779800705'
+    bucket_path: 'docker-multi'
+    on:
+      branch: master
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
